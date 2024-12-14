@@ -50,13 +50,11 @@ def main():
     clock = pygame.time.Clock()
     platforms = PlatformGroup()
     bounce = pygame.mixer.Sound('data/bounce.mp3')
+    step = pygame.mixer.Sound('data/step.mp3')
     gameover = pygame.mixer.Sound('data/gameover.mp3')
+    victorysound = pygame.mixer.Sound('data/victory.mp3')
     platformsound = pygame.mixer.Sound('data/platform.mp3')
     screamsound = pygame.mixer.Sound('data/uhu.mp3')
-    platformsound.set_volume(1.0)
-    gameover.set_volume(1.0)
-    bounce.set_volume(1.0)
-    screamsound.set_volume(1.0)
     man = pygame.sprite.Sprite()
     man.image = pygame.image.load('data/fall.png')
     man.rect = man.image.get_rect()
@@ -65,6 +63,7 @@ def main():
     man_moving = True
     scream = True
     game_over = False
+    victory = False
 
     while True:
         for event in pygame.event.get():
@@ -81,10 +80,13 @@ def main():
             elif event.type == pygame.KEYDOWN and not man_moving:
                 if event.key == pygame.K_LEFT:
                     man.rect.x -= 10
+                    step.play()
                     man.image = pygame.image.load('data/run-left.png')
                 elif event.key == pygame.K_RIGHT:
                     man.rect.x += 10
+                    step.play()
                     man.image = pygame.image.load('data/run-right.png')
+                    print(man.rect.x, man.rect.y)
                 if not pygame.sprite.spritecollide(man, platforms, False):
                     man.image = pygame.image.load('data/fall.png')
                     man_moving = True
@@ -92,8 +94,14 @@ def main():
 
         if game_over:
             pygame.mixer.music.set_volume(0.0)
-            display_game_over()
-            pygame.time.delay(3000)  # Задержка для отображения экрана Game Over
+            display_game_over('GAME OVER')
+            pygame.time.delay(4000)  # Задержка для отображения экрана Game Over
+            main()
+
+        if victory:
+            pygame.mixer.music.set_volume(0.0)
+            display_game_over('CONGRATULATIONS!')
+            pygame.time.delay(6000)  # Задержка для отображения экрана Game Over
             main()
 
         if man_moving:
@@ -118,6 +126,9 @@ def main():
         if man.rect.y > 700:
             game_over = True
             gameover.play()
+        if 625 < man.rect.y < 670 and man.rect.x > 840 and not man_moving:
+            victory = True
+            victorysound.play()
         screen.blit(bg_image, (0, 0))
         screen.blit(text, (10, 10))
         screen.blit(moon.image, (((moon.rect.x % 950) - 50), moon.rect.y))
@@ -128,7 +139,7 @@ def main():
         pygame.display.flip()
 
 
-def display_game_over():
+def display_game_over(message):
     # Создаем затемнение
     font = pygame.font.Font(None, 74)
     font2 = pygame.font.Font(None, 50)
@@ -138,7 +149,7 @@ def display_game_over():
     screen.blit(overlay, (0, 0))  # Рисуем затемнение на экране
 
     # Отображаем текст GAME OVER
-    text = font.render("GAME OVER", True,'white')
+    text = font.render(message, True,'white')
     text2 = font2.render("INSERT COIN", True, 'green')
     text_rect = text.get_rect(center=(screen_width // 2, screen_height // 2 - 40))
     text_rect2 = text2.get_rect(center=(screen_width // 2, screen_height // 2 + 10))
@@ -146,6 +157,9 @@ def display_game_over():
     screen.blit(text2, text_rect2)
 
     pygame.display.flip()  # Обновляем экран
+
+
+
 
 # Запускаем игру
 if __name__ == "__main__":
