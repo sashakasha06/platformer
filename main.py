@@ -132,7 +132,7 @@ def display_game_over():
     font = pygame.font.Font(None, 74)
     overlay = pygame.Surface((screen_width, screen_height))
     overlay.fill((0, 0, 0))
-    overlay.set_alpha(128)  # Устанавливаем прозрачность (0 - полностью прозрачно, 255 - полностью непрозрачно)
+    overlay.set_alpha(128)  # Устанавливаем прозрачность
     screen.blit(overlay, (0, 0))  # Рисуем затемнение на экране
 
     # Отображаем текст GAME OVER
