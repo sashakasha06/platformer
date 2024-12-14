@@ -116,7 +116,6 @@ def main():
                 bounce.play()
             man_moving = False
 
-
         font = pygame.font.Font(None, 50)
         text = font.render(str(platformlimit), True, (100, 255, 100))
         delta_time = clock.tick(25) / 1000
