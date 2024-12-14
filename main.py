@@ -12,7 +12,6 @@ screen_height = 700
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.mixer.music.load('data/space.mp3')
 pygame.mixer.music.set_volume(0.5)
-# Начало воспроизведения музыки с зацикливанием (-1 означает бесконечное повторение)
 pygame.mixer.music.play(loops=-1)
 
 # Загружаем фоновое изображение
