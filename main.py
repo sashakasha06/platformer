@@ -3,11 +3,17 @@ import sys
 
 # Инициализация Pygame
 pygame.init()
+pygame.mixer.init()
 
 # Устанавливаем размеры экрана
 screen_width = 900
 screen_height = 700
+
 screen = pygame.display.set_mode((screen_width, screen_height))
+pygame.mixer.music.load('data/space.mp3')
+pygame.mixer.music.set_volume(0.5)
+# Начало воспроизведения музыки с зацикливанием (-1 означает бесконечное повторение)
+pygame.mixer.music.play(loops=-1)
 
 # Загружаем фоновое изображение
 bg_image = pygame.image.load('data/bg.png')
@@ -24,6 +30,7 @@ class PlatformGroup(pygame.sprite.Group):
 
 # Основной игровой цикл
 def main():
+    pygame.mixer.music.set_volume(0.5)
     platformlimit = 5
     moon = pygame.sprite.Sprite()
     moon.image = pygame.image.load('data/moon.png')
@@ -43,6 +50,22 @@ def main():
     v = 25
     clock = pygame.time.Clock()
     platforms = PlatformGroup()
+    bounce = pygame.mixer.Sound('data/bounce.mp3')
+    gameover = pygame.mixer.Sound('data/gameover.mp3')
+    platformsound = pygame.mixer.Sound('data/platform.mp3')
+    screamsound = pygame.mixer.Sound('data/uhu.mp3')
+    platformsound.set_volume(1.0)
+    gameover.set_volume(1.0)
+    bounce.set_volume(1.0)
+    screamsound.set_volume(1.0)
+    man = pygame.sprite.Sprite()
+    man.image = pygame.image.load('data/fall.png')
+    man.rect = man.image.get_rect()
+    man.rect.x = 500
+    man.rect.y = 0
+    man_moving = True
+    scream = True
+    game_over = False
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -54,20 +77,71 @@ def main():
                     new_platform = Platform(mouse_pos)
                     platforms.add(new_platform)  # Добавляем новую платформу в группу
                     platformlimit -= 1
+                    platformsound.play()
+            elif event.type == pygame.KEYDOWN and not man_moving:
+                if event.key == pygame.K_LEFT:
+                    man.rect.x -= 10
+                    man.image = pygame.image.load('data/run-left.png')
+                elif event.key == pygame.K_RIGHT:
+                    man.rect.x += 10
+                    man.image = pygame.image.load('data/run-right.png')
+                if not pygame.sprite.spritecollide(man, platforms, False):
+                    man.image = pygame.image.load('data/fall.png')
+                    man_moving = True
+                    scream = True
 
-        # Отображаем фоновое изображение
+        if game_over:
+            pygame.mixer.music.set_volume(0.0)
+            display_game_over()
+            pygame.time.delay(3000)  # Задержка для отображения экрана Game Over
+            main()
+
+        if man_moving:
+            vman = 25
+            if scream:
+                screamsound.play()
+                scream = False
+        else:
+            vman = 0
+        if pygame.sprite.spritecollide(man, platforms, False):
+            if man_moving:
+                bounce.play()
+            man_moving = False
+
+
         font = pygame.font.Font(None, 50)
         text = font.render(str(platformlimit), True, (100, 255, 100))
         delta_time = clock.tick(25) / 1000
         moon.rect.x += v * delta_time
         rocket.rect.x += v * delta_time * 8
+        man.rect.y += vman * delta_time * 4
+        if man.rect.y > 700:
+            game_over = True
+            gameover.play()
         screen.blit(bg_image, (0, 0))
         screen.blit(text, (10, 10))
         screen.blit(moon.image, (((moon.rect.x % 950) - 50), moon.rect.y))
         screen.blit(rocket.image, (((rocket.rect.x % 3000), rocket.rect.y)))
         screen.blit(finish.image, ((finish.rect.x, finish.rect.y)))
+        screen.blit(man.image, ((man.rect.x, man.rect.y)))
         platforms.draw(screen)  # Рисуем платформы
         pygame.display.flip()
+
+
+def display_game_over():
+    # Создаем затемнение
+    font = pygame.font.Font(None, 74)
+    overlay = pygame.Surface((screen_width, screen_height))
+    overlay.fill((0, 0, 0))
+    overlay.set_alpha(128)  # Устанавливаем прозрачность (0 - полностью прозрачно, 255 - полностью непрозрачно)
+    screen.blit(overlay, (0, 0))  # Рисуем затемнение на экране
+
+    # Отображаем текст GAME OVER
+    text = font.render("GAME OVER", True,'white')
+    text_rect = text.get_rect(center=(screen_width // 2, screen_height // 2))
+    screen.blit(text, text_rect)
+
+    pygame.display.flip()  # Обновляем экран
 
 # Запускаем игру
 if __name__ == "__main__":
