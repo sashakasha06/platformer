@@ -1,20 +1,14 @@
 import pygame
 import sys
 
-# Инициализация Pygame
 pygame.init()
 pygame.mixer.init()
-
-# Устанавливаем размеры экрана
 screen_width = 900
 screen_height = 700
-
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.mixer.music.load('data/space.mp3')
 pygame.mixer.music.set_volume(0.5)
 pygame.mixer.music.play(loops=-1)
-
-# Загружаем фоновое изображение
 bg_image = pygame.image.load('data/bg.png')
 
 class Platform(pygame.sprite.Sprite):
@@ -27,7 +21,6 @@ class PlatformGroup(pygame.sprite.Group):
     def __init__(self):
         super().__init__()
 
-# Основной игровой цикл
 def main():
     pygame.mixer.music.set_volume(0.5)
     platformlimit = 5
@@ -91,19 +84,16 @@ def main():
                     man.image = pygame.image.load('data/fall.png')
                     man_moving = True
                     scream = True
-
         if game_over:
             pygame.mixer.music.set_volume(0.0)
             display_game_over('GAME OVER')
             pygame.time.delay(4000)  # Задержка для отображения экрана Game Over
             main()
-
         if victory:
             pygame.mixer.music.set_volume(0.0)
             display_game_over('CONGRATULATIONS!')
             pygame.time.delay(6000)  # Задержка для отображения экрана Game Over
             main()
-
         if man_moving:
             vman = 25
             if scream:
@@ -137,7 +127,6 @@ def main():
         platforms.draw(screen)  # Рисуем платформы
         pygame.display.flip()
 
-
 def display_game_over(message):
     # Создаем затемнение
     font = pygame.font.Font(None, 74)
@@ -146,20 +135,13 @@ def display_game_over(message):
     overlay.fill((0, 0, 0))
     overlay.set_alpha(128)  # Устанавливаем прозрачность
     screen.blit(overlay, (0, 0))  # Рисуем затемнение на экране
-
-    # Отображаем текст
     text = font.render(message, True,'white')
     text2 = font2.render("INSERT COIN", True, 'green')
     text_rect = text.get_rect(center=(screen_width // 2, screen_height // 2 - 40))
     text_rect2 = text2.get_rect(center=(screen_width // 2, screen_height // 2 + 10))
     screen.blit(text, text_rect)
     screen.blit(text2, text_rect2)
+    pygame.display.flip()
 
-    pygame.display.flip()  # Обновляем экран
-
-
-
-
-# Запускаем игру
 if __name__ == "__main__":
     main()
