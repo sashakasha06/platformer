@@ -65,6 +65,7 @@ def main():
     man_moving = True
     scream = True
     game_over = False
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -113,7 +114,7 @@ def main():
         delta_time = clock.tick(25) / 1000
         moon.rect.x += v * delta_time
         rocket.rect.x += v * delta_time * 8
-        man.rect.y += vman * delta_time
+        man.rect.y += vman * delta_time * 5
         if man.rect.y > 700:
             game_over = True
             gameover.play()
@@ -130,6 +131,7 @@ def main():
 def display_game_over():
     # Создаем затемнение
     font = pygame.font.Font(None, 74)
+    font2 = pygame.font.Font(None, 50)
     overlay = pygame.Surface((screen_width, screen_height))
     overlay.fill((0, 0, 0))
     overlay.set_alpha(128)  # Устанавливаем прозрачность
@@ -137,8 +139,11 @@ def display_game_over():
 
     # Отображаем текст GAME OVER
     text = font.render("GAME OVER", True,'white')
-    text_rect = text.get_rect(center=(screen_width // 2, screen_height // 2))
+    text2 = font2.render("INSERT COIN", True, 'green')
+    text_rect = text.get_rect(center=(screen_width // 2, screen_height // 2 - 40))
+    text_rect2 = text2.get_rect(center=(screen_width // 2, screen_height // 2 + 10))
     screen.blit(text, text_rect)
+    screen.blit(text2, text_rect2)
 
     pygame.display.flip()  # Обновляем экран
 
