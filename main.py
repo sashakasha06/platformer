@@ -86,7 +86,6 @@ def main():
                     man.rect.x += 10
                     step.play()
                     man.image = pygame.image.load('data/run-right.png')
-                    print(man.rect.x, man.rect.y)
                 if not pygame.sprite.spritecollide(man, platforms, False):
                     man.image = pygame.image.load('data/fall.png')
                     man_moving = True
@@ -122,7 +121,7 @@ def main():
         delta_time = clock.tick(25) / 1000
         moon.rect.x += v * delta_time
         rocket.rect.x += v * delta_time * 8
-        man.rect.y += vman * delta_time * 5
+        man.rect.y += vman * delta_time * 2
         if man.rect.y > 700:
             game_over = True
             gameover.play()
@@ -148,7 +147,7 @@ def display_game_over(message):
     overlay.set_alpha(128)  # Устанавливаем прозрачность
     screen.blit(overlay, (0, 0))  # Рисуем затемнение на экране
 
-    # Отображаем текст GAME OVER
+    # Отображаем текст
     text = font.render(message, True,'white')
     text2 = font2.render("INSERT COIN", True, 'green')
     text_rect = text.get_rect(center=(screen_width // 2, screen_height // 2 - 40))
