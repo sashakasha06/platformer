@@ -113,7 +113,7 @@ def main():
         delta_time = clock.tick(25) / 1000
         moon.rect.x += v * delta_time
         rocket.rect.x += v * delta_time * 8
-        man.rect.y += vman * delta_time * 4
+        man.rect.y += vman * delta_time
         if man.rect.y > 700:
             game_over = True
             gameover.play()
