@@ -84,7 +84,7 @@ def main():
     game_over = False
     victory = False
     running = True
-    invisspis = [(532, 354, 190, 20), (569, 510, 199, 20), (645, 623, 128, 20)]
+    invisspis = [(532, 354, 190, 20), (569, 510, 199, 20), (645, 623, 128, 20), (532, 690, 368, 20)]
     for i in invisspis:
         invisibles.add(Invisplatform(i))
     while running:
